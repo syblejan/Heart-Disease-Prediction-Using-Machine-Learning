@@ -63,7 +63,9 @@ def evaluate(df, output_dir):
     (out/"evaluation.json").write_text(json.dumps(report,indent=2),encoding="utf-8")
     pd.DataFrame({"actual":y_test.to_numpy(),"predicted":test_pred,
                   "probability":test_prob}).to_csv(out/"holdout_predictions.csv",index=False)
-    print(json.dumps({k:v for k,v in report.items() if k!="five_fold_out_of_fold"},indent=2))
+    print(json.dumps({k: v for k, v in report.items() if k not in ("holdout", "five_fold_out_of_fold")}, indent=2))
+    print("Holdout metrics:", json.dumps({k: v for k, v in report["holdout"].items() if k != "classification_report"}, indent=2))
+    print("5-fold CV metrics:", json.dumps({k: v for k, v in report["five_fold_out_of_fold"].items() if k != "classification_report"}, indent=2))
     return report
 
 if __name__=="__main__":
