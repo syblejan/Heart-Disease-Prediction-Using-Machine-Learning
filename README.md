@@ -28,22 +28,51 @@ The original `notebooks/original_heart_disease_prediction.ipynb` reported **78.6
 - Export `results/evaluation.json` and `results/holdout_predictions.csv` upon local execution.
 - Preserve original EDA notebook, plots and historical outputs unchanged.
 
-## Execution and Results
-The original notebook's recorded holdout accuracy is **78.69%**. The reproducible companion code has been reviewed and published, and now downloads the same original dataset URL automatically. **The exact new pipeline has not yet been verified end-to-end in a Python runtime**. We therefore do not report invented new CV/test scores.
+## Verified Execution and Results
 
-For a quick experiment run:
+The **exact published `src/evaluate.py`** was run successfully in GitHub Actions using Python 3.11, scikit-learn and the **same original Packt CSV URL** as the initial notebook. The workflow installs dependencies, evaluates the model, and uploads `evaluation.json` plus `holdout_predictions.csv` as downloadable run artifacts.
+
+**Dataset:** 303 raw records, **302 after removing duplicates**, 164 target-positive. Fixed-seed stratified split: **241 train / 61 holdout**. All scaling is fit within the training partition of the scikit-learn Pipeline.
+
+| Metric | Stratified holdout (61) | 5-fold out-of-fold (302) |
+|---|---:|---:|
+| Accuracy | **78.69%** | **83.77%** |
+| Precision (class 1) | 76.32% | 81.42% |
+| Recall (class 1) | 87.88% | 90.85% |
+| F1 (class 1) | 81.69% | 85.88% |
+| ROC-AUC | 0.8647 | 0.8958 |
+
+### Confusion matrices
+
+Order = [actual class 0, actual class 1] across rows and [predicted class 0, predicted class 1] across columns.
+
+| Holdout | Predicted 0 | Predicted 1 |
+|---|---:|---:|
+| Actual 0 | 19 | 9 |
+| Actual 1 | 4 | 29 |
+
+| 5-fold out-of-fold | Predicted 0 | Predicted 1 |
+|---|---:|---:|
+| Actual 0 | 104 | 34 |
+| Actual 1 | 15 | 149 |
+
+The holdout accuracy **78.69%** matches the preserved notebook output; the new out-of-fold cross-validation is a distinct evaluation, **not** a 5-point improvement on the identical holdout.
+
+**Automated verification:** [GitHub Actions workflow](https://github.com/syblejan/Heart_Disease_prediction/actions/workflows/evaluate.yml) — [successful end-to-end run](https://github.com/syblejan/Heart_Disease_prediction/actions/runs/38611740132). Execution artifacts are attached to the workflow run, not committed to the repository.
+
+Run the experiment yourself:
 
 ```bash
 git clone https://github.com/syblejan/Heart_Disease_prediction.git
 cd Heart_Disease_prediction
 python -m venv .venv
-# Windows: .venv\\Scripts\\activate
+# Activate virtual environment
 python -m pip install -r requirements.txt
-python src/evaluate.py  # fetches original README-linked CSV automatically
+python src/evaluate.py
 # Optional offline run: python src/evaluate.py --data data/heart.csv
 ```
 
-The generated JSON contains the precise holdout and cross-validation scores.
+**Caution:** This is an educational model trained on a small retrospective dataset; the scores do not establish clinical validity or safety.
 
 ## Repository Structure
 ```text
