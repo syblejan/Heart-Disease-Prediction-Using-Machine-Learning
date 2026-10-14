@@ -1,109 +1,69 @@
-# ❤️ Heart Disease Prediction (Machine Learning Classification)
+# Heart Disease Prediction — Leakage-Aware Machine Learning
 
-> A supervised machine learning project that predicts the presence of heart disease in patients using Logistic Regression, with full EDA, feature scaling, and model evaluation.
+**Python | Pandas | Scikit-learn | Logistic Regression | Stratified Validation**
 
----
+An educational binary classification study of heart-disease labels from tabular clinical features. **Not a medical diagnostic or clinical decision-making system.**
 
-## 📌 Task Objective
+## Overview
+The original project includes exploratory data analysis, duplicate removal, visualization, scaled Logistic Regression, a stratified holdout, a confusion matrix and an ROC curve. The source notebook is preserved unchanged. A portable and reproducible companion pipeline has now been added.
 
-The goal of this task was to build a binary classification model that predicts whether a patient has heart disease (`1`) or not (`0`) based on clinical features. The project follows a complete end-to-end ML pipeline: data loading → cleaning → exploratory analysis → model training → evaluation → feature interpretation.
+## Source Dataset
+The original notebook downloads a tabular `heart.csv` dataset from the [Packt Data Analysis Workshop repository](https://github.com/PacktWorkshops/The-Data-Analysis-Workshop/blob/master/Chapter07/Dataset/heart.csv). The notebook reports **302 records after duplicate removal** (14 columns: 13 features plus binary `target`), with no missing values at inspection.
 
----
+**The CSV is not copied into this public repository**. Download the source dataset after checking its usage terms and put it at `data/heart.csv`. The original notebook uses an internet URL, while the new code uses this explicit local path.
 
-## 📂 Dataset Used
+Features: age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca and thal. This dataset is educational; label semantics and clinical utility are not independently established.
 
-**Dataset:** [Heart Disease Dataset](https://raw.githubusercontent.com/PacktWorkshops/The-Data-Analysis-Workshop/master/Chapter07/Dataset/heart.csv)  
-**Source:** Packt Data Analysis Workshop (GitHub)  
-**Format:** CSV
+## Original Notebook: Verified Recorded Result
+The original `notebooks/original_heart_disease_prediction.ipynb` reported **78.69% holdout accuracy (48/61 correct)** using an 80/20 stratified split and Logistic Regression.
 
-The dataset contains patient clinical records with the following key features:
+**Important correction:** The old README stated **“~85%+ accuracy” and “~0.90+ AUC”**, but the notebook's recorded output explicitly shows **78.69% accuracy**, and does not provide a numeric ROC-AUC output in the inspected notebook. Those approximate headline claims have been removed.
 
-| Feature    | Description                                      |
-|------------|--------------------------------------------------|
-| `age`      | Age of the patient                               |
-| `sex`      | Sex (1 = male, 0 = female)                       |
-| `cp`       | Chest pain type (0–3)                            |
-| `trestbps` | Resting blood pressure (mm Hg)                   |
-| `chol`     | Serum cholesterol (mg/dl)                        |
-| `fbs`      | Fasting blood sugar > 120 mg/dl (1 = true)      |
-| `restecg`  | Resting ECG results                              |
-| `thalach`  | Maximum heart rate achieved                      |
-| `exang`    | Exercise-induced angina (1 = yes)                |
-| `oldpeak`  | ST depression induced by exercise                |
-| `slope`    | Slope of the peak exercise ST segment            |
-| `ca`       | Number of major vessels colored by fluoroscopy  |
-| `thal`     | Thalassemia type                                 |
-| `target`   | **Target variable** — 1 = Heart Disease, 0 = No |
+## Improvements
+- All preprocessing and Logistic Regression within a **single scikit-learn Pipeline**.
+- Explicit fixed-seed, stratified 80/20 train/test split.
+- StandardScaler fitted exclusively on training data within each split or fold.
+- Added shuffled **5-fold stratified out-of-fold evaluation** with accuracy, precision, recall, F1, ROC-AUC and confusion matrices.
+- Consistent duplicate handling, target checks and input validation.
+- Export `results/evaluation.json` and `results/holdout_predictions.csv` upon local execution.
+- Preserve original EDA notebook, plots and historical outputs unchanged.
 
----
+## Execution and Results
+The original notebook's recorded holdout accuracy is **78.69%**. The reproducible companion code has been reviewed and published, but **the exact new pipeline has not yet been executed against the full source CSV in the Python runtime**. We therefore do not report invented new CV/test scores.
 
-## 🔬 ML Pipeline
+For a quick experiment run:
 
-### Step 1 — Data Cleaning
-- Checked for missing values (none found)
-- Removed duplicate rows to ensure data integrity
+```bash
+git clone https://github.com/syblejan/Heart_Disease_prediction.git
+cd Heart_Disease_prediction
+python -m venv .venv
+# Windows: .venv\\Scripts\\activate
+python -m pip install -r requirements.txt
+# Download and save the original dataset as data/heart.csv
+python src/evaluate.py
+```
 
-### Step 2 — Exploratory Data Analysis (EDA)
-Three key visualizations were produced:
+The generated JSON contains the precise holdout and cross-validation scores.
 
-- **Target Distribution** — Bar chart showing the class balance between patients with and without heart disease
-- **Correlation Heatmap** — Identified relationships between all features; notable positive correlations with `cp` (chest pain) and `thalach` (max heart rate), and negative correlations with `exang` and `oldpeak`
-- **Age vs Heart Disease** — Stacked histogram with KDE showing age distribution across both classes
+## Repository Structure
+```text
+Heart_Disease_prediction/
+├── README.md
+├── requirements.txt
+├── .gitignore
+├── notebooks/
+│   ├── original_heart_disease_prediction.ipynb
+│   └── reproducible_heart_disease.ipynb
+└── src/
+    └── evaluate.py
+```
 
-### Step 3 — Preprocessing
-- **Feature/Target Split:** All columns except `target` used as features (`X`); `target` as label (`y`)
-- **Train-Test Split:** 80% training / 20% testing with `stratify=y` to preserve class proportions
-- **Feature Scaling:** `StandardScaler` applied to normalize all features — fit on training data, applied to test data
+`data/` and generated `results/` are ignored by Git.
 
-### Step 4 — Model Training
-- **Algorithm:** Logistic Regression (`sklearn.linear_model.LogisticRegression`)
-- Trained on scaled training features with `random_state=42` for reproducibility
+## Limitations
+This is a small, retrospective educational classification dataset. A single train/test split is uncertain, and repeated cross-validation cannot establish medical reliability. Different clinics, population shifts, data leakage from related patients, feature availability, threshold trade-offs, model calibration and external validation all matter before any clinical use.
 
----
+## Author
+**Syble Jan** — BS Computer Science | Aspiring AI/ML Engineer
 
-## 📊 Model Evaluation
-
-### Metrics Used
-- **Accuracy Score**
-- **Classification Report** (Precision, Recall, F1-Score per class)
-- **Confusion Matrix** (heatmap)
-- **ROC Curve & AUC Score**
-
-### Results
-
-| Metric        | Value      |
-|---------------|------------|
-| Accuracy      | ~85%+      |
-| AUC Score     | ~0.90+     |
-
-> *Exact values depend on runtime; results are consistent across runs due to fixed `random_state=42`.*
-
-The ROC curve showed strong discriminative ability, with the AUC well above the 0.5 random baseline.
-
-### Feature Importance (Logistic Regression Coefficients)
-
-Feature importance was derived from the model's learned coefficients. Features with the **largest absolute coefficients** had the greatest influence on predictions:
-
-- **Positive predictors** (increase heart disease probability): chest pain type (`cp`), max heart rate (`thalach`)
-- **Negative predictors** (decrease probability): exercise-induced angina (`exang`), ST depression (`oldpeak`), number of vessels (`ca`)
-
----
-
-## 🛠️ Tech Stack
-
-| Library / Tool      | Purpose                                      |
-|---------------------|----------------------------------------------|
-| `pandas`            | Data loading and manipulation                |
-| `numpy`             | Numerical operations                         |
-| `matplotlib`        | Plotting and visualization                   |
-| `seaborn`           | Statistical visualizations (heatmap, countplot) |
-| `scikit-learn`      | ML model, preprocessing, and evaluation      |
-| Google Colab        | Development environment                      |
-
-
-## 🔍 Key Findings
-
-- Logistic Regression achieved strong performance on this structured clinical dataset, demonstrating that linear models can be highly effective when features are properly scaled.
-- `stratify=y` in the train-test split was essential to prevent class imbalance from skewing evaluation metrics.
-- Feature scaling (`StandardScaler`) was critical — Logistic Regression is sensitive to feature magnitude, and unscaled features would have degraded model performance.
-- The correlation heatmap revealed that chest pain type and maximum heart rate are among the strongest indicators of heart disease in this dataset.
+[GitHub profile](https://github.com/syblejan)
