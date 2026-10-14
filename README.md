@@ -10,7 +10,7 @@ The original project includes exploratory data analysis, duplicate removal, visu
 ## Source Dataset
 The original notebook downloads a tabular `heart.csv` dataset from the [Packt Data Analysis Workshop repository](https://github.com/PacktWorkshops/The-Data-Analysis-Workshop/blob/master/Chapter07/Dataset/heart.csv). The notebook reports **302 records after duplicate removal** (14 columns: 13 features plus binary `target`), with no missing values at inspection.
 
-**The CSV is not copied into this public repository**. Download the source dataset after checking its usage terms and put it at `data/heart.csv`. The original notebook uses an internet URL, while the new code uses this explicit local path.
+**The CSV is not copied into this public repository.** The evaluation script loads the same public source URL used by the original notebook by default (requires internet). You can also download the CSV and pass `--data data/heart.csv` to run offline. Please check the source's usage terms.
 
 Features: age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca and thal. This dataset is educational; label semantics and clinical utility are not independently established.
 
@@ -29,7 +29,7 @@ The original `notebooks/original_heart_disease_prediction.ipynb` reported **78.6
 - Preserve original EDA notebook, plots and historical outputs unchanged.
 
 ## Execution and Results
-The original notebook's recorded holdout accuracy is **78.69%**. The reproducible companion code has been reviewed and published, but **the exact new pipeline has not yet been executed against the full source CSV in the Python runtime**. We therefore do not report invented new CV/test scores.
+The original notebook's recorded holdout accuracy is **78.69%**. The reproducible companion code has been reviewed and published, and now downloads the same original dataset URL automatically. **The exact new pipeline has not yet been verified end-to-end in a Python runtime**. We therefore do not report invented new CV/test scores.
 
 For a quick experiment run:
 
@@ -39,8 +39,8 @@ cd Heart_Disease_prediction
 python -m venv .venv
 # Windows: .venv\\Scripts\\activate
 python -m pip install -r requirements.txt
-# Download and save the original dataset as data/heart.csv
-python src/evaluate.py
+python src/evaluate.py  # fetches original README-linked CSV automatically
+# Optional offline run: python src/evaluate.py --data data/heart.csv
 ```
 
 The generated JSON contains the precise holdout and cross-validation scores.
