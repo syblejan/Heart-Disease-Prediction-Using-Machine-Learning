@@ -11,6 +11,8 @@ from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val
 from sklearn.metrics import (accuracy_score, precision_score, recall_score, f1_score,
                              roc_auc_score, confusion_matrix, classification_report)
 
+SOURCE_URL = "https://raw.githubusercontent.com/PacktWorkshops/The-Data-Analysis-Workshop/master/Chapter07/Dataset/heart.csv"
+
 FEATURES = ["age","sex","cp","trestbps","chol","fbs","restecg","thalach",
             "exang","oldpeak","slope","ca","thal"]
 
@@ -67,7 +69,7 @@ def evaluate(df, output_dir):
 if __name__=="__main__":
     parser=argparse.ArgumentParser()
     root=Path(__file__).resolve().parents[1]
-    parser.add_argument("--data",default=root/"data"/"heart.csv")
+    parser.add_argument("--data",default=SOURCE_URL, help="Local CSV or README source URL")
     parser.add_argument("--out",default=root/"results")
     args=parser.parse_args()
     evaluate(load_dataset(args.data),args.out)
